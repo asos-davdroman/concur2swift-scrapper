@@ -1,5 +1,8 @@
 import requests
 from bs4 import BeautifulSoup as scrapper
+import SwiftModel
+
+swift_models = []
 
 page = requests.get('https://media.fitanalytics.com/resources/api/reference-20180420.html#type-style')
 soup = scrapper(page.content, 'html.parser')
@@ -12,4 +15,14 @@ for raw_model in raw_models:
     if 'id="type-' not in str(raw_model_name):
         continue
 
-    print(raw_model)
+    # TODO: Only allow models with tables
+
+    model_name = raw_model.find('h2', recursive=False).get_text()
+    try:
+        model_descriptions = [x.get_text() for x in raw_model.find_all('p', recursive=False)]
+        model_description = '\n'.join(model_descriptions)
+    except Exception: model_description = ''
+
+    # TODO: extract properties from table
+
+    # TODO: create model object
