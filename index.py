@@ -54,4 +54,5 @@ for raw_model in raw_models:
             property = SwiftProperty(property_name, property_type, property_required, property_description)
             model_properties.append(property)
 
-    # TODO: create model object
+    # Create model object
+    swift_models.append(SwiftModel(model_name, model_description, model_properties))
