@@ -15,7 +15,11 @@ for raw_model in raw_models:
     if 'id="type-' not in str(raw_model_name):
         continue
 
-    # TODO: Only allow models with tables
+    raw_model_tables = raw_model.find_all('table')
+
+    # Only allow models with tables (properties)
+    if not raw_model_tables:
+        continue
 
     model_name = raw_model.find('h2', recursive=False).get_text()
     try:
