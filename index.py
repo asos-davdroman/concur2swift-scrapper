@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup as scrapper
 from SwiftModel import *
+import SwiftModelGen
+import os
 
 swift_models = []
 
@@ -36,23 +38,33 @@ for raw_model in raw_models:
 
             property_type_raw = tds[1].get_text()
             property_type = ''
-            if property_type_raw is 'string':
+            if property_type_raw == 'string':
                 property_type = 'String'
-            elif property_type_raw is 'boolean':
+            elif property_type_raw == 'boolean':
                 property_type = 'Bool'
-            elif property_type_raw is 'number':
+            elif property_type_raw == 'number':
                 property_type = 'Decimal'
-            elif property_type_raw is 'integer':
+            elif property_type_raw == 'integer':
                 property_type = 'Int'
-            elif property_type_raw is 'array':
+            elif property_type_raw == 'array':
                 property_type = 'Array<FIXME>'
             else:
                 property_type = property_type_raw
 
-            property_required = tds[2].get_text() is 'true'
+            property_required = tds[2].get_text() == 'true'
             property_description = tds[3].get_text()
             property = SwiftProperty(property_name, property_type, property_required, property_description)
             model_properties.append(property)
 
     # Create model object
     swift_models.append(SwiftModel(model_name, model_description, model_properties))
+
+for model in swift_models:
+    output = SwiftModelGen.generate(model)
+
+    if not os.path.exists('output'):
+        os.makedirs('output')
+
+    io = open('output/' + model.name + '.swift', 'w')
+    io.write(output)
+    io.close()
